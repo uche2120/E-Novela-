@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Become a Writer - E-Novela</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* Writer-specific styles */
+    .writer-hero {
+      background: linear-gradient(135deg, var(--orange) 0%, var(--purple) 100%);
+      color: white;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .writer-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="books" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse"><rect x="20" y="40" width="60" height="100" fill="rgba(255,255,255,0.05)" rx="4"/><rect x="90" y="50" width="60" height="90" fill="rgba(255,255,255,0.08)" rx="4"/><rect x="50" y="20" width="50" height="120" fill="rgba(255,255,255,0.06)" rx="4"/></pattern></defs><rect width="1200" height="600" fill="none"/><rect width="1200" height="600" fill="url(%23books)"/></svg>') repeat;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .writer-hero-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      padding: 0.875rem 1rem;
+      border: 1px solid rgba(30, 30, 30, 0.12);
+      border-radius: 8px;
+      font-family: 'Poppins', system-ui;
+      font-size: 0.95rem;
+      transition: all 180ms ease;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+      background: rgba(255, 87, 34, 0.02);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .form-label .required {
+      color: var(--orange);
+    }
+
+    .form-hint {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .file-upload {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-upload-input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .file-upload-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 2rem;
+      border: 2px dashed rgba(255, 87, 34, 0.3);
+      border-radius: 8px;
+      background: rgba(255, 87, 34, 0.02);
+      cursor: pointer;
+      transition: all 180ms ease;
+      font-weight: 500;
+    }
+
+    .file-upload-label:hover {
+      border-color: var(--orange);
+      background: rgba(255, 87, 34, 0.05);
+    }
+
+    .file-upload-input:focus + .file-upload-label {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+    }
+
+    .file-name {
+      font-size: 0.85rem;
+      color: var(--green);
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    .btn-submit {
+      background: var(--orange);
+      color: white;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 200ms ease;
+      width: 100%;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #e64a16;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 87, 34, 0.3);
+    }
+
+    .btn-submit:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .success-message {
+      display: none;
+      padding: 1.5rem;
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      color: var(--green);
+      text-align: center;
+      margin-top: 2rem;
+      animation: slideInUp 400ms ease;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    .success-message h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-message p {
+      font-size: 0.95rem;
+      margin: 0.25rem 0;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .benefit-card {
+      padding: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(30, 30, 30, 0.06);
+      text-align: center;
+      transition: all 200ms ease;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(30, 30, 30, 0.12);
+    }
+
+    .benefit-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .benefit-card h4 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .benefit-card p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .instructions-box {
+      background: rgba(103, 58, 183, 0.05);
+      border-left: 4px solid var(--purple);
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin-top: 3rem;
+    }
+
+    .instructions-box h3 {
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .instructions-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .instructions-list li {
+      padding: 0.75rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .instructions-list li::before {
+      content: '✓';
+      color: var(--green);
+      font-weight: 700;
+      margin-top: 0.1rem;
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error-message {
+      color: #d32f2f;
+      font-size: 0.85rem;
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .form-input.error, .form-textarea.error, .form-select.error {
+      border-color: #d32f2f;
+    }
+
+    /* smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @media (max-width: 640px) {
+      .writer-hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .writer-hero p {
+        font-size: 1rem;
+      }
+
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- NAV -->
+  <header class="fixed w-full z-40 top-0">
+    <div class="max-w-7xl mx-auto px-4">
+      <nav class="flex items-center justify-between py-4 nav-blur rounded-xl card-shadow px-4">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-tr from-orange-400 to-orange-600 text-white font-bold">E</div>
+            <div class="text-lg font-semibold">E-Novela</div>
+          </div>
+          <div class="hidden md:flex items-center ml-6 gap-4 text-sm text-slate-700">
+            <a href="index.html" class="hover:underline">Home</a>
+            <a href="library.html" class="hover:underline">Library</a>
+            <a href="#" class="hover:underline font-semibold" style="color: var(--orange);">Become a Writer</a>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="hidden md:flex items-center gap-3">
+            <a href="library.html" class="text-sm text-slate-600 hover:text-slate-800">Library</a>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="loginBtn" class="px-4 py-2 rounded-full btn-outline text-sm hidden md:inline">Login</button>
+            <button id="signupBtn" class="px-4 py-2 rounded-full btn-primary text-sm">Sign up</button>
+          </div>
+
+          <!-- mobile menu -->
+          <button id="mobileMenuBtn" class="md:hidden p-2" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mobile menu backdrop + drawer -->
+  <div id="mobileBackdrop" class="mobile-menu-backdrop" tabindex="-1"></div>
+  <aside id="mobileMenu" class="mobile-menu" aria-hidden="true" role="dialog" aria-label="Mobile navigation">
+    <div class="flex items-center justify-between mb-4">
+      <div class="inline-flex items-center gap-3">
+        <div class="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-tr from-orange-400 to-orange-600 text-white font-bold">E</div>
+        <div class="text-lg font-semibold">E-Novela</div>
+      </div>
+      <button id="closeMobile" class="close-mobile" aria-label="Close menu">✕</button>
+    </div>
+
+    <nav>
+      <a href="index.html" class="mobile-link">Home</a>
+      <a href="library.html" class="mobile-link">Library</a>
+      <a href="apply.html" class="mobile-link">Become a Writer</a>
+      <a href="mailto:info@enovela.com" class="mobile-link">Contact</a>
+    </nav>
+
+    <div class="mobile-cta">
+      <a href="#" class="btn-outline">Login</a>
+      <a href="#" class="btn-primary">Sign up</a>
+    </div>
+  </aside>
+
+  <main class="pt-28">
+
+    <!-- HERO SECTION -->
+    <section class="writer-hero py-16 md:py-24">
+      <div class="writer-hero-content max-w-7xl mx-auto px-6">
+        <div class="max-w-3xl">
+          <div class="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full mb-6 text-sm">
+            <span class="inline-block w-2 h-2 bg-white rounded-full"></span>
+            <span>Join 100k+ Readers & Authors</span>
+          </div>
+
+          <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">
+            Become a Verified Author on E-Novela
+          </h1>
+
+          <p class="mt-6 text-lg md:text-xl opacity-95 max-w-2xl">
+            Share your stories with thousands of readers and earn from your writing. Start your author journey today.
+          </p>
+
+          <div class="mt-8">
+            <button id="heroApplyBtn" class="px-6 py-3 rounded-full btn-primary text-white font-semibold shadow-lg hover:scale-105 transition">
+              ✨ Apply Now
+            </button>
+          </div>
+
+          <div class="mt-8 flex flex-col sm:flex-row gap-6 text-sm opacity-90">
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span>Verified author program</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+              </svg>
+              <span>Earn from your readers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPLICATION FORM SECTION -->
+    <section id="applicationForm" class="max-w-4xl mx-auto px-6 py-16">
+      <div class="bg-white rounded-2xl p-8 card-shadow">
+        <h2 class="text-3xl font-bold mb-2">Submit Your Application</h2>
+        <p class="text-slate-600 mb-8">Fill out the form below to apply as an author on E-Novela. We'll review your application and get back to you within 5-7 business days.</p>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">✅</div>
+          <h3>Application Received!</h3>
+          <p>Thank you for your interest in joining E-Novela.</p>
+          <p>We'll contact you via email or WhatsApp once your application is reviewed.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="applicationFormElement" class="space-y-6" novalidate>
+          <!-- Full Name -->
+          <div class="form-group">
+            <label class="form-label">
+              Full Name <span class="required">*</span>
+            </label>
+            <input type="text" name="fullName" class="form-input" placeholder="Enter your full name" required>
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Email Address -->
+          <div class="form-group">
+            <label class="form-label">
+              Email Address <span class="required">*</span>
+            </label>
+            <input type="email" name="email" class="form-input" placeholder="your@email.com" required>
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label class="form-label">
+              Phone Number <span style="color: #999; font-size: 0.85rem;">(Optional)</span>
+            </label>
+            <input type="tel" name="phone" class="form-input" placeholder="+234 (0) 123 456 7890">
+            <div class="form-hint">Include country code for WhatsApp contact</div>
+          </div>
+
+          <!-- Short Bio -->
+          <div class="form-group">
+            <label class="form-label">
+              About You / Short Bio <span class="required">*</span>
+            </label>
+            <textarea name="bio" class="form-textarea" placeholder="Tell us about yourself as a writer. What genres do you write? What's your writing experience?" required></textarea>
+            <div class="form-hint">Min 50 characters | Max 500 characters</div>
+            <div class="error-message"></div>
+          </div>
+
+          <!-- Writing Genre Preference -->
+          <div class="form-group">
+            <label class="form-label">
+              Preferred Writing Genre <span class="required">*</span>
+            </label>
+            <select name="genre" class="form-select" required>
+              <option value="">-- Select a genre --</option>
+              <option value="Romance">❤️ Romance</option>
+              <option value="Action">⚔️ Action</option>
+              <option value="Horror">👻 Horror</option>
+              <option value="Comedy">😂 Comedy</option>
+              <option value="Drama">🎭 Drama</option>
+              <option value="Fantasy">🧙 Fantasy</option>
+              <option value="Sci-Fi">🚀 Sci-Fi</option>
+              <option value="Mystery">🔍 Mystery</option>
+              <option value="Thriller">🎬 Thriller</option>
+              <option value="Other">📖 Other</option>
+            </select>
+            <div class="error-message"></div>
+          </div>
+
+          <!-- File Upload (CV/Portfolio) -->
+          <div class="form-group">
+            <label class="form-label">
+              CV / Portfolio Link <span style="color: #999; font-size: 0.85rem;">(Optional)</span>
+            </label>
+            <div class="file-upload">
+              <input type="file" name="portfolio" id="portfolioInput" class="file-upload-input" accept=".pdf,.doc,.docx,.txt" />
+              <label for="portfolioInput" class="file-upload-label">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" style="color: var(--orange);">
+                  <path fill-rule="evenodd" d="M8 16.5a1 1 0 001-1V7a1 1 0 11-2 0v8.5a1 1 0 001 1zm-2-2a1 1 0 011-1V7a1 1 0 110 2v6.5a1 1 0 01-1-1zm4 0a1 1 0 011-1V7a1 1 0 112 0v6.5a1 1 0 11-2 0zm3-2h2a1 1 0 100-2h-2a1 1 0 000 2z" clip-rule="evenodd" />
+                </svg>
+                <span>Click to upload or drag & drop</span>
+              </label>
+            </div>
+            <div id="fileName" class="file-name"></div>
+            <div class="form-hint">Supported: PDF, DOC, DOCX, TXT (Max 5MB)</div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit">
+            📤 Submit Application
+          </button>
+
+          <p class="text-xs text-slate-500 text-center">
+            By submitting, you agree to our <a href="#" class="underline hover:text-slate-700">Terms & Conditions</a> and <a href="#" class="underline hover:text-slate-700">Privacy Policy</a>
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- BENEFITS SECTION -->
+    <section class="max-w-7xl mx-auto px-6 py-16">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-3">Benefits of Becoming an Author</h2>
+        <p class="text-slate-600 text-lg">Start your creative journey and unlock new opportunities</p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">💰</div>
+          <h4>Earn from Your Stories</h4>
+          <p>Get paid based on reader engagement, purchases, and ad revenue. Build a sustainable income from your writing.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">📊</div>
+          <h4>Track Reader Engagement</h4>
+          <p>Access detailed analytics about your readers, views, likes, and reading patterns to improve your craft.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">👤</div>
+          <h4>Build Your Author Profile</h4>
+          <p>Showcase your work, build a fanbase, and establish yourself as a recognized author in your genre.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🌍</div>
+          <h4>Reach Global Audience</h4>
+          <p>Connect with thousands of readers worldwide. Expand your readership beyond geographical boundaries.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">⭐</div>
+          <h4>Verified Badge</h4>
+          <p>Get a verified author badge to stand out from the crowd and build trust with your readers.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">🎯</div>
+          <h4>Publishing Tools</h4>
+          <p>Access professional editing, formatting, and publishing tools to get your stories ready for readers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTRUCTIONS SECTION -->
+    <section class="max-w-4xl mx-auto px-6 py-12 pb-24">
+      <div class="instructions-box">
+        <h3>📋 Important Guidelines</h3>
+        <ul class="instructions-list">
+          <li>Your stories must be original and not plagiarized from any source</li>
+          <li>Content must comply with our community guidelines and be appropriate for diverse audiences</li>
+          <li>We'll review your application within 5-7 business days</li>
+          <li>You'll be contacted via email or WhatsApp once your application is approved</li>
+          <li>Once approved, you can start publishing your stories on E-Novela immediately</li>
+          <li>Our team is here to support you with publishing and promotion</li>
+        </ul>
+      </div>
+
+      <!-- <div class="mt-8 p-6 bg-blue-50 border-l-4 border-blue-500 rounded">
+        <h4 class="font-semibold mb-2">Have Questions?</h4>
+        <p class="text-sm text-slate-700">
+          Contact us at <a href="mailto:info@enovela.com" class="text-orange-600 font-semibold hover:underline">info@enovela.com</a> 
+          or reach out on WhatsApp at <span class="font-semibold">+234 ***</span>
+        </p>
+      </div> -->
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[var(--dark)] text-white">
+    <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-tr from-orange-400 to-orange-600 text-white font-bold">E</div>
+          <div class="text-lg font-semibold">E-Novela</div>
+        </div>
+        <p class="text-sm text-slate-300">A premium reading platform with ad-based unlocks and fair pay for authors.</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">Quick Links</h4>
+        <ul class="text-sm text-slate-300 space-y-1">
+          <li><a href="index.html" class="hover:underline">Home</a></li>
+          <li><a href="library.html" class="hover:underline">Library</a></li>
+          <li><a href="apply.html" class="hover:underline">Become a Writer</a></li>
+          <li><a href="#" class="hover:underline">Privacy</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">About</h4>
+        <p class="text-sm text-slate-300">Our mission is to connect readers with creative storytellers and create a sustainable ecosystem for authors.</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">Contact</h4>
+        <p class="text-sm text-slate-300">Email: <a href="mailto:info@enovela.com" class="underline">info@enovela.com</a></p>
+        <p class="text-sm text-slate-300 mt-2">WhatsApp: +234 ***</p>
+        <div class="mt-3 flex gap-3">
+          <a class="p-2 rounded-md bg-white/10" href="#" title="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.92c-.66.3-1.37.5-2.11.58a3.6 3.6 0 0 0-6.14 2.6c0 .28.02.55.08.81A10.2 10.2 0 0 1 3.2 5.2a3.55 3.55 0 0 0-.49 1.81c0 1.25.64 2.35 1.61 3-.6 0-1.16-.18-1.65-.45v.04c0 1.74 1.27 3.2 2.95 3.53-.52.14-1.06.22-1.62.22-.4 0-.8-.04-1.19-.11.8 2.45 3.12 4.24 5.88 4.29A7.27 7.27 0 0 1 2 19.53a10.2 10.2 0 0 0 5.53 1.62c6.64 0 10.28-5.5 10.28-10.27v-.47A7.07 7.07 0 0 0 22 5.92z"/></svg>
+          </a>
+          <a class="p-2 rounded-md bg-white/10" href="#" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.5A4.5 4.5 0 1 0 16.5 13 4.5 4.5 0 0 0 12 8.5zm5.6-3.2a1 1 0 1 0 1 1 1 1 0 0 0-1-1z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 py-4 text-center text-sm text-slate-400">© <span id="year"></span> E-Novela · All rights reserved</div>
+  </footer>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="fixed bottom-6 right-6 hidden bg-white rounded-lg px-4 py-3 card-shadow z-50">
+    <div id="toastMsg" class="text-sm"></div>
+  </div>
+
+<script>
+  // ========== UTILITIES ==========
+  function el(id) {
+    return document.getElementById(id);
+  }
+
+  function showToast(msg, timeout = 3000) {
+    const t = el('toast');
+    const m = el('toastMsg');
+    m.textContent = msg;
+    t.classList.remove('hidden');
+    setTimeout(() => t.classList.add('hidden'), timeout);
+  }
+
+  // ========== FORM VALIDATION ==========
+  const form = el('applicationFormElement');
+  const successMsg = el('successMessage');
+
+  // Validation rules
+  const validationRules = {
+    fullName: {
+      required: true,
+      validate: (value) => value.trim().length > 0,
+      message: 'Full name is required'
+    },
+    email: {
+      required: true,
+      validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+      message: 'Please enter a valid email address'
+    },
+    bio: {
+      required: true,
+      validate: (value) => value.trim().length >= 50 && value.trim().length <= 500,
+      message: 'Bio must be between 50-500 characters'
+    },
+    genre: {
+      required: true,
+      validate: (value) => value !== '',
+      message: 'Please select a genre'
+    },
+    phone: {
+      required: false,
+      validate: (value) => {
+        if (!value) return true; // optional
+        return /^[\d+\-\s()]{7,}$/.test(value); // basic phone validation
+      },
+      message: 'Please enter a valid phone number'
+    }
+  };
+
+  // Clear error message on input
+  form.querySelectorAll('input, textarea, select').forEach(field => {
+    field.addEventListener('blur', () => {
+      clearError(field);
+    });
+  });
+
+  function clearError(field) {
+    const errorDiv = field.parentElement.querySelector('.error-message');
+    if (errorDiv) {
+      errorDiv.classList.remove('show');
+      field.classList.remove('error');
+    }
+  }
+
+  function showError(field, message) {
+    const errorDiv = field.parentElement.querySelector('.error-message');
+    if (errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+      field.classList.add('error');
+    }
+  }
+
+  function validateForm() {
+    let isValid = true;
+
+    for (const [fieldName, rules] of Object.entries(validationRules)) {
+      const field = form.querySelector(`[name="${fieldName}"]`);
+      if (!field) continue;
+
+      const value = field.value.trim();
+
+      // Check required
+      if (rules.required && !value) {
+        showError(field, rules.message);
+        isValid = false;
+        continue;
+      }
+
+      // Check validation
+      if (value && !rules.validate(value)) {
+        showError(field, rules.message);
+        isValid = false;
+      } else {
+        clearError(field);
+      }
+    }
+
+    return isValid;
+  }
+
+  // ========== FILE UPLOAD ==========
+  const portfolioInput = el('portfolioInput');
+  const fileNameDiv = el('fileName');
+
+  portfolioInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        fileNameDiv.textContent = 'File size exceeds 5MB limit';
+        fileNameDiv.style.color = '#d32f2f';
+        portfolioInput.value = '';
+        return;
+      }
+
+      fileNameDiv.textContent = `✓ ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+      fileNameDiv.style.color = 'var(--green)';
+    }
+  });
+
+  // Drag & drop
+  const fileUploadLabel = document.querySelector('.file-upload-label');
+  fileUploadLabel.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    fileUploadLabel.style.borderColor = 'var(--orange)';
+    fileUploadLabel.style.background = 'rgba(255, 87, 34, 0.1)';
+  });
+
+  fileUploadLabel.addEventListener('dragleave', () => {
+    fileUploadLabel.style.borderColor = 'rgba(255, 87, 34, 0.3)';
+    fileUploadLabel.style.background = 'rgba(255, 87, 34, 0.02)';
+  });
+
+  fileUploadLabel.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileUploadLabel.style.borderColor = 'rgba(255, 87, 34, 0.3)';
+    fileUploadLabel.style.background = 'rgba(255, 87, 34, 0.02)';
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      portfolioInput.files = files;
+      const event = new Event('change', { bubbles: true });
+      portfolioInput.dispatchEvent(event);
+    }
+  });
+
+  // ========== FORM SUBMISSION ==========
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    // Validate form
+    if (!validateForm()) {
+      showToast('Please fix the errors in the form');
+      return;
+    }
+
+    // Collect form data
+    const formData = {
+      fullName: form.querySelector('[name="fullName"]').value.trim(),
+      email: form.querySelector('[name="email"]').value.trim(),
+      phone: form.querySelector('[name="phone"]').value.trim(),
+      bio: form.querySelector('[name="bio"]').value.trim(),
+      genre: form.querySelector('[name="genre"]').value,
+      portfolio: portfolioInput.files.length > 0 ? portfolioInput.files[0].name : null
+    };
+
+    // Simulate form submission
+    console.log('Form Data:', formData);
+
+    // Show success message
+    form.style.display = 'none';
+    successMsg.classList.add('show');
+
+    // Scroll to success message
+    successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Store data (in a real app, you'd send this to a backend)
+    localStorage.setItem('writerApplication', JSON.stringify(formData));
+
+    showToast('Application submitted successfully! 🎉');
+
+    // Optional: Reset after 3 seconds
+    setTimeout(() => {
+      // You could offer a button to submit another application or return to home
+    }, 2000);
+  });
+
+  // ========== SMOOTH SCROLLING ==========
+  el('heroApplyBtn').addEventListener('click', () => {
+    el('applicationForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  // ========== MOBILE MENU ==========
+  document.addEventListener('DOMContentLoaded', () => {
+    el('year').textContent = new Date().getFullYear();
+
+    const mobileMenuBtn = el('mobileMenuBtn');
+    const mobileMenu = el('mobileMenu');
+    const mobileBackdrop = el('mobileBackdrop');
+    const closeMobile = el('closeMobile');
+
+    function openMobileMenu() {
+      mobileMenu.classList.add('open');
+      mobileBackdrop.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('open');
+      mobileBackdrop.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobile.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', closeMobileMenu);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
+  });
+</script>
+
+</body>
+</html>

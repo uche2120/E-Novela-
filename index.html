@@ -1,48 +1,616 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>E-Novela - Read & Publish Stories</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            scroll-behavior: smooth;
-        }
-        /* For custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1E1E1E;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #FF5722;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #e64a19;
-        }
-    </style>
-<script type="importmap">
-{
-  "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
-  }
-}
-</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>E-Novela — Discover, Read & Publish Inspiring Stories</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-<body class="bg-gray-100">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+<body class="antialiased">
+
+  <!-- NAV -->
+  <header class="fixed w-full z-40 top-0">
+    <div class="max-w-7xl mx-auto px-4">
+      <nav class="flex items-center justify-between py-4 nav-blur rounded-xl card-shadow px-4">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-tr from-orange-400 to-orange-600 text-white font-bold">E</div>
+            <div class="text-lg font-semibold">E-Novela</div>
+          </div>
+          <div class="hidden md:flex items-center ml-6 gap-4 text-sm text-slate-700">
+            <a href="#home" class="hover:underline">Home</a>
+            <a href="library.html" class="hover:underline">Library</a>
+            <a href="apply.html" class="hover:underline">Become a Writer</a>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- optional search -->
+          <div class="hidden md:flex items-center gap-2 bg-white rounded-full px-3 py-1 border card-shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+            </svg>
+            <input id="search" placeholder="Search novels..." class="outline-none text-sm" />
+          </div>
+
+          <!-- <div class="hidden md:flex items-center gap-3">
+            <a href="#library" class="text-sm text-slate-600 hover:text-slate-800">Library</a>
+            <a href="#become" class="text-sm text-slate-600 hover:text-slate-800">Become a Writer</a>
+          </div> -->
+
+          <div class="flex items-center gap-2">
+            <button id="loginBtn" class="px-4 py-2 rounded-full btn-outline text-sm hidden md:inline">Login</button>
+            <button id="signupBtn" class="px-4 py-2 rounded-full btn-primary text-sm">Sign up</button>
+          </div>
+
+          <!-- mobile menu -->
+          <button id="mobileMenuBtn" class="md:hidden p-2" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Mobile menu backdrop + drawer -->
+  <div id="mobileBackdrop" class="mobile-menu-backdrop" tabindex="-1"></div>
+  <aside id="mobileMenu" class="mobile-menu" aria-hidden="true" role="dialog" aria-label="Mobile navigation">
+    <div class="flex items-center justify-between mb-4">
+      <div class="inline-flex items-center gap-3">
+        <div class="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-tr from-orange-400 to-orange-600 text-white font-bold">E</div>
+        <div class="text-lg font-semibold">E-Novela</div>
+      </div>
+      <button id="closeMobile" class="close-mobile" aria-label="Close menu">✕</button>
+    </div>
+
+    <nav>
+      <a href="index.html#home" class="mobile-link">Home</a>
+      <a href="library.html" class="mobile-link">Library</a>
+      <a href="apply.html" class="mobile-link">Become a Writer</a>
+      <a href="mailto:info@enovela.com" class="mobile-link">Contact</a>
+    </nav>
+
+    <div class="mobile-cta">
+      <a href="#" class="btn-outline">Login</a>
+      <a href="#" class="btn-primary">Sign up</a>
+    </div>
+  </aside>
+
+  <main id="home" class="pt-28">
+
+    <!-- HERO -->
+    <section class="hero-height relative overflow-hidden">
+      <div class="absolute inset-0">
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2b0c69e85348d6f8d75b1b2b0adbb6f9" alt="reading" class="w-full h-full object-cover brightness-75" />
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-6 h-full flex items-center">
+        <div class="max-w-3xl text-white">
+          <div class="inline-flex items-center gap-3 bg-white/10 px-3 py-1 rounded-full mb-4">
+            <span class="text-sm">New</span>
+            <div class="h-1 w-1 bg-white rounded-full"></div>
+            <span class="text-sm">Ad-based unlocks</span>
+          </div>
+
+          <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Discover, Read & Publish Inspiring Stories.</h1>
+          <p class="mt-4 text-lg max-w-xl">Buy or Watch an Ad to Unlock Stories Instantly. Read anywhere — support authors — grow the storyverse.</p>
+
+          <div class="mt-6 flex gap-3 flex-wrap">
+            <button id="startReading" class="px-5 py-3 rounded-full btn-primary text-sm shadow hover:scale-[1.02] transition">🧡 Start Reading</button>
+            <button onclick="location.href='#become'" class="px-5 py-3 rounded-full border border-white/20 text-sm hover-purple transition">💼 Become a Writer</button>
+          </div>
+
+          <div class="mt-6 grid grid-cols-2 gap-3 text-sm">
+            <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c5.523 0 10 2.686 10 6v2H2v-2c0-3.314 4.477-6 10-6z" /></svg> 100k+ Readers</div>
+            <div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l2-2 4 4" /></svg> Ad unlocks & purchases</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPLORE BY GENRE (replaces Trending & Recommended) -->
+    <section class="max-w-7xl mx-auto px-6 mt-12">
+      <div class="text-center">
+        <p class="text-sm text-slate-600">Find the perfect story that matches your mood ❤️🔥😂👻</p>
+        <h2 class="text-2xl font-semibold mt-2" style="padding-top: 2%;">Explore by Genre</h2>
+      </div>
+
+      <div class="mt-6 genres-section">
+        <!-- On mobile this will be a horizontal scroller; on desktop it becomes a grid -->
+        <div class="genres-grid thin-scroll">
+
+          <a href="library.html" class="genre-card" style="--card-color: #E53935;">
+            <span class="genre-emoji">⚔️</span>
+            <span class="genre-name">All</span>
+          </a>
+
+
+          <a href="genre.html?category=Love" class="genre-card" style="--card-color: var(--orange);">
+            <span class="genre-emoji">❤️</span>
+            <span class="genre-name">Love Stories</span>
+          </a>
+
+          <a href="genre.html?category=Sad" class="genre-card" style="--card-color: var(--purple);">
+            <span class="genre-emoji">😢</span>
+            <span class="genre-name">Sad Stories</span>
+          </a>
+
+          <a href="genre.html?category=Action" class="genre-card" style="--card-color: #E53935;">
+            <span class="genre-emoji">⚔️</span>
+            <span class="genre-name">Action</span>
+          </a>
+
+          <a href="genre.html?category=Horror" class="genre-card" style="--card-color: var(--dark);">
+            <span class="genre-emoji">👻</span>
+            <span class="genre-name">Horror</span>
+          </a>
+
+          <a href="genre.html?category=Comedy" class="genre-card" style="--card-color: var(--green);">
+            <span class="genre-emoji">😂</span>
+            <span class="genre-name">Comedy</span>
+          </a>
+
+          <a href="genre.html?category=Drama" class="genre-card" style="--card-color: #3F51B5;">
+            <span class="genre-emoji">🎭</span>
+            <span class="genre-name">Drama</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="max-w-7xl mx-auto px-6 mt-12">
+      <div class="bg-white rounded-2xl p-6 card-shadow">
+        <h3 class="text-2xl font-semibold">How E-Novela Works</h3>
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl border card-shadow">
+            <h4 class="font-semibold">Read for Free</h4>
+            <p class="text-sm mt-2">Watch a 1-minute ad to unlock stories temporarily.</p>
+          </div>
+          <div class="p-4 rounded-xl border card-shadow">
+            <h4 class="font-semibold">Buy & Read Anytime</h4>
+            <p class="text-sm mt-2">Purchase stories for offline access and ad-free reading.</p>
+          </div>
+          <div class="p-4 rounded-xl border card-shadow">
+            <h4 class="font-semibold">Publish & Earn</h4>
+            <p class="text-sm mt-2">Become an author, publish your work, and earn from readers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BECOME A WRITER -->
+    <section id="become" class="max-w-7xl mx-auto px-6 mt-12 mb-16">
+      <div class="bg-gradient-to-r from-white to-white rounded-2xl p-6 card-shadow flex flex-col md:flex-row items-center gap-6 justify-between">
+        <div class="max-w-xl">
+          <h3 class="text-2xl font-semibold">Are You a Storyteller?</h3>
+          <p class="mt-3 text-slate-600">Join our growing community of authors. Get your stories published and earn from your readers.</p>
+          <p class="mt-3 text-sm text-slate-500">To become a verified writer, please contact +234 *** or send your CV to <a href="mailto:info@enovela.com" class="text-slate-700 underline">info@enovela.com</a>.</p>
+          <div class="mt-4">
+           <a href="apply.html"><button id="" class="px-5 py-3 rounded-full btn-primary">Apply Now</button></a> 
+          </div>
+        </div>
+
+        <div class="w-full md:w-1/3">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhjC330xaS4xaO9lV6BuwJV5O7Z4is0eot6g&s" alt="write" class="w-full rounded-xl object-cover h-48"/>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[var(--dark)] text-white">
+    <div class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-md flex items-center justify-center bg-gradient-to-tr from-orange-400 to-orange-600 text-white font-bold">E</div>
+          <div class="text-lg font-semibold">E-Novela</div>
+        </div>
+        <p class="text-sm text-slate-300">A premium reading platform with ad-based unlocks and fair pay for authors.</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">Quick Links</h4>
+        <ul class="text-sm text-slate-300 space-y-1">
+          <li><a href="#library" class="hover:underline">Library</a></li>
+          <li><a href="#become" class="hover:underline">Become a Writer</a></li>
+          <li><a href="#" class="hover:underline">Privacy</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">About</h4>
+        <p class="text-sm text-slate-300">Our mission is to connect readers with creative storytellers and create a sustainable ecosystem for authors.</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold mb-2">Contact</h4>
+        <p class="text-sm text-slate-300">Email: <a href="mailto:info@enovela.com" class="underline">info@enovela.com</a></p>
+        <p class="text-sm text-slate-300 mt-2">WhatsApp: +234 ***</p>
+        <div class="mt-3 flex gap-3">
+          <a class="p-2 rounded-md bg-white/10" href="#" title="Twitter">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.92c-.66.3-1.37.5-2.11.58a3.6 3.6 0 0 0-6.14 2.6c0 .28.02.55.08.81A10.2 10.2 0 0 1 3.2 5.2a3.55 3.55 0 0 0-.49 1.81c0 1.25.64 2.35 1.61 3-.6 0-1.16-.18-1.65-.45v.04c0 1.74 1.27 3.2 2.95 3.53-.52.14-1.06.22-1.62.22-.4 0-.8-.04-1.19-.11.8 2.45 3.12 4.24 5.88 4.29A7.27 7.27 0 0 1 2 19.53a10.2 10.2 0 0 0 5.53 1.62c6.64 0 10.28-5.5 10.28-10.27v-.47A7.07 7.07 0 0 0 22 5.92z"/></svg>
+          </a>
+          <a class="p-2 rounded-md bg-white/10" href="#" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.5A4.5 4.5 0 1 0 16.5 13 4.5 4.5 0 0 0 12 8.5zm5.6-3.2a1 1 0 1 0 1 1 1 1 0 0 0-1-1z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 py-4 text-center text-sm text-slate-400">© <span id="year"></span> E-Novela · All rights reserved</div>
+  </footer>
+
+  <!-- BOOK MODAL -->
+  <div id="bookModal" class="fixed inset-0 hidden z-50 items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl w-full max-w-2xl p-6 relative">
+      <button id="closeModal" class="absolute right-4 top-4 p-2 rounded-md hover:bg-slate-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 8.586L4.293 2.879 2.879 4.293 8.586 10l-5.707 5.707 1.414 1.414L10 11.414l5.707 5.707 1.414-1.414L11.414 10l5.707-5.707-1.414-1.414L10 8.586z" clip-rule="evenodd"/></svg>
+      </button>
+
+      <div class="flex gap-6 items-start">
+        <img id="modalCover" src="" alt="cover" class="w-36 h-52 rounded-lg object-cover shadow" />
+        <div class="flex-1">
+          <h3 id="modalTitle" class="text-xl font-semibold"></h3>
+          <p id="modalAuthor" class="text-sm text-slate-500 mt-1"></p>
+
+          <div class="mt-4 flex gap-3">
+            <button id="buyBtn" class="px-4 py-2 rounded-full btn-primary">🪙 Buy to Read (₦2.00)</button>
+            <button id="watchBtn" class="px-4 py-2 rounded-full border hover:scale-[1.02]">🎥 Watch Ad (1 Minute)</button>
+          </div>
+
+          <div id="modalStatus" class="mt-4 text-sm text-slate-600"></div>
+
+          <!-- ad simulator -->
+          <div id="adSimulator" class="mt-4 hidden">
+            <div class="text-sm mb-2">Ad playing... <span id="adSeconds">60</span>s</div>
+            <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+              <div id="adProgress" class="h-3 rounded-full" style="background: linear-gradient(90deg,var(--orange),var(--purple)); width: 0%"></div>
+            </div>
+            <div class="mt-3 text-sm text-slate-500">Please wait — this simulates a 1-minute ad. Close will cancel.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="fixed bottom-6 right-6 hidden bg-white rounded-lg px-4 py-3 card-shadow">
+    <div id="toastMsg" class="text-sm"></div>
+  </div>
+
+<script>
+  // ---------- sample book data ----------
+  const books = [
+    { id: 'b1', title: 'The Last Ember', author: 'A. K. Nwosu', genre: 'Fantasy', views: '1.2M', likes: 12400, cover: 'https://images.unsplash.com/photo-1529336953124-7463b36f9f63?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=2f7f4f6e9d2f7b2f733f0a4fd3f5c6b3' },
+    { id: 'b2', title: 'City of Echoes', author: 'M. Adeyemi', genre: 'Sci-Fi', views: '540k', likes: 5400, cover: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=3f1bd2dd9a4b8b4dffb7c9d265b2b8a2' },
+    { id: 'b3', title: 'Whispers in Rain', author: 'L. Chukwu', genre: 'Romance', views: '220k', likes: 2200, cover: 'https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=7a24f3f4c2b4b3f7b4a4a2f4f6f2a5b6' },
+    { id: 'b4', title: 'Silent Oath', author: 'R. Ibe', genre: 'Mystery', views: '90k', likes: 900, cover: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=8b4d4f6f6d4e4c3b4a2a1b0a4d3c2b1' },
+    { id: 'b5', title: 'Starlit Voyage', author: 'E. Okonkwo', genre: 'Adventure', views: '340k', likes: 3200, cover: 'https://images.unsplash.com/photo-1473186505569-9c61870c11f9?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=6c2d2f6a3e2f4b3a6b5c4d3e2f1a0b9c' },
+    { id: 'b6', title: 'Threads of Fate', author: 'O. Musa', genre: 'Drama', views: '410k', likes: 4100, cover: 'https://images.unsplash.com/photo-1520975914461-3a1a2f2d7d0d?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=4b7c6d5e3f2a1b0c9e8d7c6b5a4c3e2' }
+  ];
+
+  // ---------- utilities ----------
+  function el(id){ return document.getElementById(id) }
+  function showToast(msg, timeout=3000){
+    const t = el('toast'), m = el('toastMsg');
+    m.textContent = msg; t.classList.remove('hidden');
+    setTimeout(()=> t.classList.add('hidden'), timeout);
+  }
+
+  // ---------- render UI ----------
+  function createBookCard(book){
+    const card = document.createElement('div');
+    card.className = 'min-w-[240px] bg-white rounded-2xl p-3 card-shadow flex gap-3 items-start hover:scale-[1.02] transition';
+    card.innerHTML = `
+      <img class="book-cover shadow-sm" src="${book.cover}" alt="${book.title}">
+      <div class="flex-1">
+        <div class="flex items-start justify-between">
+          <div>
+            <h4 class="font-semibold">${book.title}</h4>
+            <div class="text-xs text-slate-500">${book.author} • ${book.genre}</div>
+          </div>
+          <div class="text-right text-xs text-slate-500">
+            <div>👁️ ${book.views}</div>
+            <div class="mt-2">${book.likes} ❤</div>
+          </div>
+        </div>
+
+        <div class="mt-3 flex items-center gap-2">
+          <button data-id="${book.id}" class="readBtn px-3 py-1 rounded-full border text-sm hover:bg-[var(--purple)] hover:text-white transition">Read</button>
+          <div id="status-${book.id}" class="text-sm text-slate-500"></div>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  function createGridCard(book){
+    const card = document.createElement('div');
+    card.className = 'bg-white rounded-2xl p-4 card-shadow hover:shadow-xl transition';
+    card.innerHTML = `
+      <div class="flex gap-4">
+        <img class="w-20 h-28 rounded-lg object-cover" src="${book.cover}" alt="${book.title}">
+        <div class="flex-1">
+          <h4 class="font-semibold leading-tight">${book.title}</h4>
+          <div class="text-sm text-slate-500 mt-1">${book.author} • ${book.genre}</div>
+          <div class="mt-3 flex items-center gap-3">
+            <button data-id="${book.id}" class="readBtnSmall px-3 py-1 rounded-full border text-sm hover:bg-[var(--purple)] hover:text-white transition">Read</button>
+            <div id="status-grid-${book.id}" class="text-sm text-slate-500"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  function renderBooks(){
+    const trending = el('trendingRow');
+    trending.innerHTML = '';
+    books.slice(0,6).forEach(b => trending.appendChild(createBookCard(b)));
+
+    const grid = el('recommendedGrid');
+    grid.innerHTML = '';
+    books.slice(0,6).forEach(b => grid.appendChild(createGridCard(b)));
+
+    // attach event listeners
+    document.querySelectorAll('.readBtn').forEach(btn => {
+      btn.addEventListener('click', ()=> openBookModal(btn.dataset.id));
+    });
+    document.querySelectorAll('.readBtnSmall').forEach(btn => {
+      btn.addEventListener('click', ()=> openBookModal(btn.dataset.id));
+    });
+
+    updateAllStatuses();
+  }
+
+  // ---------- localStorage unlock logic ----------
+  const STORAGE_KEY = 'enovela_unlocked_books';
+  function getUnlocked(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return {};
+      return JSON.parse(raw);
+    }catch(e){ return {}; }
+  }
+  function saveUnlocked(obj){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+  }
+  function unlockBook(id, durationSeconds = 3600){
+    const map = getUnlocked();
+    const expiresAt = Date.now() + durationSeconds*1000;
+    map[id] = { unlockedAt: Date.now(), expiresAt };
+    saveUnlocked(map);
+    updateAllStatuses();
+  }
+  function isUnlocked(id){
+    const map = getUnlocked();
+    if(!map[id]) return false;
+    if(Date.now() > map[id].expiresAt){
+      // expired, remove
+      delete map[id]; saveUnlocked(map); return false;
+    }
+    return true;
+  }
+  function timeLeft(id){
+    const map = getUnlocked();
+    if(!map[id]) return 0;
+    return Math.max(0, Math.round((map[id].expiresAt - Date.now())/1000));
+  }
+
+  function updateStatusFor(id){
+    const s = isUnlocked(id);
+    const statusEl = el('status-'+id);
+    const statusGrid = el('status-grid-'+id);
+    const modalStatus = el('modalStatus');
+
+    if(statusEl) statusEl.innerHTML = s ? `<span class="text-xs text-[var(--green)] font-medium">Unlocked · ${formatSeconds(timeLeft(id))} left</span>` : '';
+    if(statusGrid) statusGrid.innerHTML = s ? `<span class="text-xs text-[var(--green)] font-medium">Unlocked · ${formatSeconds(timeLeft(id))} left</span>` : '';
+    if(modalStatus && modalStatus.dataset && modalStatus.dataset.for === id){
+      modalStatus.innerHTML = s ? `<span class="text-sm text-[var(--green)]">✅ Book unlocked · ${formatSeconds(timeLeft(id))} left</span>` : '';
+    }
+  }
+  function updateAllStatuses(){
+    books.forEach(b => updateStatusFor(b.id));
+  }
+  function formatSeconds(sec){
+    if(sec <= 0) return 'expired';
+    const h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+    if(h>0) return `${h}h ${m}m`;
+    if(m>0) return `${m}m ${s}s`;
+    return `${s}s`;
+  }
+
+  // ---------- modal & ad logic ----------
+  let activeBookId = null;
+  let adInterval = null;
+  function openBookModal(bookId){
+    activeBookId = bookId;
+    const book = books.find(b => b.id === bookId);
+    if(!book) return;
+
+    el('modalCover').src = book.cover;
+    el('modalTitle').textContent = book.title;
+    el('modalAuthor').textContent = 'By ' + book.author;
+    el('modalStatus').dataset.for = bookId;
+    el('modalStatus').textContent = '';
+
+    // show buy/watch buttons
+    el('buyBtn').disabled = false;
+    el('watchBtn').disabled = false;
+    el('adSimulator').classList.add('hidden');
+
+    el('bookModal').classList.remove('hidden');
+  }
+
+  function closeBookModal(){
+    el('bookModal').classList.add('hidden');
+    stopAd();
+  }
+
+  el('closeModal').addEventListener('click', closeBookModal);
+  el('bookModal').addEventListener('click', (e)=>{
+    if(e.target === el('bookModal')) closeBookModal();
+  });
+
+  // BUY (simulate immediate purchase)
+  el('buyBtn').addEventListener('click', ()=>{
+    if(!activeBookId) return;
+    // simulate purchase flow
+    unlockBook(activeBookId, 24*3600); // buy -> unlock for 24 hours
+    el('modalStatus').innerHTML = `<span class="text-[var(--green)]">✅ Purchased! Book unlocked for 24 hours.</span>`;
+    showToast('Purchase successful — book unlocked for 24 hours');
+    updateAllStatuses();
+  });
+
+  // WATCH AD
+  el('watchBtn').addEventListener('click', ()=>{
+    if(!activeBookId) return;
+    startAd(60);
+  });
+
+  function startAd(seconds){
+    el('adSimulator').classList.remove('hidden');
+    el('adSeconds').textContent = seconds;
+    el('adProgress').style.width = '0%';
+
+    let left = seconds;
+    const total = seconds;
+
+    // disable buttons while ad is playing
+    el('buyBtn').disabled = true;
+    el('watchBtn').disabled = true;
+
+    adInterval = setInterval(()=>{
+      left--;
+      const pct = Math.round(((total-left)/total)*100);
+      el('adSeconds').textContent = left;
+      el('adProgress').style.width = pct + '%';
+      if(left <= 0){
+        stopAd(true);
+      }
+    }, 1000);
+  }
+
+  function stopAd(completed = false){
+    if(adInterval) { clearInterval(adInterval); adInterval = null; }
+    el('adSimulator').classList.add('hidden');
+    el('buyBtn').disabled = false;
+    el('watchBtn').disabled = false;
+
+    if(completed && activeBookId){
+      unlockBook(activeBookId, 3600); // unlocked for 1 hour
+      el('modalStatus').innerHTML = `<span class="text-[var(--green)]">✅ Ad watched! Book unlocked for 1 hour.</span>`;
+      showToast('Ad watched — book unlocked for 1 hour');
+      updateAllStatuses();
+    }
+  }
+
+  // check expirations every 10s
+  setInterval(updateAllStatuses, 10 * 1000);
+
+  // ---------- startup ----------
+  document.addEventListener('DOMContentLoaded', ()=>{
+    renderBooks();
+    el('year').textContent = new Date().getFullYear();
+
+    // startReading -> smooth scroll to library
+    el('startReading').addEventListener('click', ()=> document.querySelector('#library').scrollIntoView({behavior:'smooth'}));
+    el('applyNow').addEventListener('click', ()=> {
+      // simple modal simulation: open writer info (we already show contact in the section)
+      showToast('Open your email client to apply: info@enovela.com');
+      window.location.href = 'mailto:info@enovela.com';
+    });
+
+    // mobile menu button - simple
+    // mobile menu toggle logic
+    const mobileMenuBtn = el('mobileMenuBtn');
+    const mobileMenu = el('mobileMenu');
+    const mobileBackdrop = el('mobileBackdrop');
+    const closeMobile = el('closeMobile');
+
+    function openMobileMenu(){
+      mobileMenu.classList.add('open');
+      mobileBackdrop.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobileMenu(){
+      mobileMenu.classList.remove('open');
+      mobileBackdrop.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    mobileMenuBtn.addEventListener('click', openMobileMenu);
+    closeMobile.addEventListener('click', closeMobileMenu);
+    mobileBackdrop.addEventListener('click', closeMobileMenu);
+
+    // close when selecting any mobile link
+    document.querySelectorAll('.mobile-link').forEach(a => a.addEventListener('click', ()=>{
+      closeMobileMenu();
+    }));
+
+    // close on ESC
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMobileMenu(); });
+
+    // basic search hook (non-functional placeholder)
+    el('search').addEventListener('input', (e)=>{
+      const q = e.target.value.toLowerCase();
+      // simple filter for demo
+      document.querySelectorAll('#recommendedGrid > div, #trendingRow > div').forEach(card=>{
+        card.style.display = (q === '' || card.innerText.toLowerCase().includes(q)) ? '' : 'none';
+      });
+    });
+
+    // If a book is unlocked and user clicks Read while unlocked => open "reader" (simulate)
+    document.body.addEventListener('click', (ev) => {
+      const target = ev.target;
+      if(target.matches('.readBtn, .readBtnSmall')){
+        const id = target.dataset.id;
+        if(isUnlocked(id)){
+          // open reader simulation
+          showToast('Opening reader — enjoy!');
+          // Here you would route to the reader page; we'll simulate by opening a simple overlay
+          openReaderPreview(id);
+        }
+      }
+    });
+
+  });
+
+  // ---------- reader preview (simple) ----------
+  function openReaderPreview(id){
+    const book = books.find(b => b.id === id);
+    if(!book) return;
+    const reader = document.createElement('div');
+    reader.className = 'fixed inset-0 z-60 bg-black/70 flex items-center justify-center p-6';
+    reader.innerHTML = `
+      <div class="bg-white w-full max-w-3xl p-6 rounded-xl relative">
+        <button id="closeReader" class="absolute right-4 top-4 p-2">Close</button>
+        <h2 class="text-xl font-semibold">${book.title}</h2>
+        <p class="text-sm text-slate-500">By ${book.author} · <span class="text-[var(--green)]">Unlocked · ${formatSeconds(timeLeft(id))} left</span></p>
+        <div class="mt-4 text-slate-700">
+          <p><em>Reader preview — replace with your full reader UI.</em></p>
+          <div class="mt-4 border rounded p-4 text-sm h-60 overflow-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non placerat mi. Etiam non tellus sed magna facilisis aliquam. Suspendisse potenti. (This is a demo reading area.)</div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(reader);
+    reader.querySelector('#closeReader').addEventListener('click', ()=> reader.remove());
+  }
+</script>
+
 </body>
 </html>
